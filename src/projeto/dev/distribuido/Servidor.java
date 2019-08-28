@@ -1,42 +1,51 @@
 package projeto.dev.distribuido;
-import java.util.Scanner;
-import java.net.ServerSocket;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
-import java.io.ObjectOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import javax.imageio.ImageIO;
+
 
 public class Servidor{
     int porta = 1234;
-    Date d = new Date();
-    public Servidor(){
-        try{
-            //escuta
-            ServerSocket ss = new ServerSocket(porta);
-            System.out.println("Servidor Iniciado");
-            //canal de comunicação
-            Socket s = ss.accept();
-            System.out.println("Cliente do IP:" + s.getInetAddress().getHostAddress());
-          
-            Scanner entrada = new Scanner(s.getInputStream());
+    String mensagem = "";
+    public Servidor() throws IOException{
+        System.out.println("Servidor Rodando");
+        
+        ServerSocket servidorSocket = new ServerSocket(porta);
+        Socket socket = servidorSocket.accept();
+        
+        OutputStream outputstream = socket.getOutputStream();
+        outputstream.write("Servidor ta funcionando".getBytes());
+
+        while(true){
+            InputStream inStream = socket.getInputStream();
+            byte[] bytte = new byte[1000];
+            inStream.read(bytte);
             
-            while(entrada.hasNextLine()){
-                System.out.println(entrada.nextLine());
-            }
+            String resposta = new String(bytte);
             
-            entrada.close();
-            ss.close();
+            System.out.println(resposta);
             
-            OutputStream os = s.getOutputStream();
-            os.write(d.toString().getBytes());
-            os.close();
-        }
-        catch(IOException ioe){
-            ioe.printStackTrace();
+            BufferedImage escudo = ImageIO.read(new File("C:/Users/Administrador/Desktop/projeto-dev-distribuido/src/Servidor/"+ resposta.trim().toLowerCase()+".jpg"));
+       
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(escudo, "jpg", baos);
+            
+            byte[] size = ByteBuffer.allocate(4).putInt(baos.size()).array();
+            outputstream.write(size);
+            outputstream.write(baos.toByteArray());
+            outputstream.flush();
         }
     }
-    public static void main(String args[]){
-        Servidor s = new Servidor();
+    
+    public static void main(String args[]) throws IOException{
+        Servidor servidor = new Servidor();
     }
 }
