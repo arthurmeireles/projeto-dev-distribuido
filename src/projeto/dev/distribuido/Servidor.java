@@ -36,6 +36,7 @@ public class Servidor{
             BufferedImage escudo = ImageIO.read(new File("C:/Users/Administrador/Desktop/projeto-dev-distribuido/src/Servidor/"+ resposta.trim().toLowerCase()+".jpg"));
        
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            
             ImageIO.write(escudo, "jpg", baos);
             
             byte[] size = ByteBuffer.allocate(4).putInt(baos.size()).array();

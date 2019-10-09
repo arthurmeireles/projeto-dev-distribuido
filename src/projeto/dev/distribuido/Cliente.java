@@ -27,7 +27,9 @@ public class Cliente extends javax.swing.JFrame {
         byte[] tamanho = new byte[4];
         inputStream.read(tamanho);
         int size = ByteBuffer.wrap(tamanho).asIntBuffer().get();
+        
         byte[] tamanhoImagem = new byte[size];
+        
         inputStream.read(tamanhoImagem);
         BufferedImage escudo = ImageIO.read(new ByteArrayInputStream(tamanhoImagem));
         Image dimg = escudo.getScaledInstance(imageFrame.getWidth(), imageFrame.getHeight(),
